@@ -1,28 +1,33 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { prisma } from "../utils/prisma";
+import { NewUserRequest } from "../utils/Interfaces";
 
 export const newUser = async (request: FastifyRequest, reply: FastifyReply) => {
   try {
-    const { name, email, cpf}: any = request.body;
+    const { name, email, role }: NewUserRequest = request.body as NewUserRequest;
 
-    const existingUser = await prisma.patient.findFirst({
-      where: {
-        OR: [
-          { email: email },
-          { cpf: cpf }
-        ]
-      }
+    // Validate input
+    if (!name || !email || !role) {
+      return reply.code(400).send({ error: "Name, email, and role are required." });
+    }
+
+    const existingUser = await prisma.user.findUnique({
+      where: { email }
     });
 
     if (existingUser) {
-      return reply.code(400).send({ error: "Email ou CPF já estão em uso." });
+      return reply.code(400).send({ error: "Email já está em uso." });
     }
 
-    const user = await prisma.patient.create({
+    // Create the new user
+    const user = await prisma.user.create({
       data: {
-        name, email, cpf,
+        name,
+        email,
+        role: role.toUpperCase() as "SCHEDULER" | "PROFESSIONAL",
       }
-    })
+    });
+
     return reply.code(201).send(user);
   } catch (error) {
     console.error(error);

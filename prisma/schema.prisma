@@ -13,11 +13,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  SCHEDULER
+  PROFESSIONAL
+}
+
 model User {
   id        String        @id @default(cuid())
   email     String        @unique
-  name      String
-  role      String        // e.g., "scheduler" or "professional"
+  name      String          
+  role      Role        // e.g., "scheduler" or "professional"
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
   appointmentsScheduled Appointment[] @relation("ScheduledBy")
