@@ -1,0 +1,26 @@
+🚀 Funcionalidades Básicas (MVP)
+Cadastro de Clínicas e Médicos (um médico pode atender em várias clínicas).
+Agendamento Online (médicos e assistentes podem marcar, alterar e cancelar consultas).
+Notificações Automáticas (e-mail, SMS ou WhatsApp para lembrar pacientes das consultas).
+Histórico de Consultas (médico vê todas as consultas anteriores do paciente).
+Gerenciamento de Pacientes (dados do paciente, alergias, exames, observações).
+🔥 Funcionalidades Diferenciais (Para Destacar seu SaaS)
+Confirmação Automática de Consultas (o paciente recebe um lembrete e confirma com 1 clique).
+Fila de Espera Inteligente (se um paciente desmarcar, outro pode ser chamado automaticamente).
+Gestão Financeira (relatórios de faturamento, pagamento de consultas via cartão/Pix).
+Teleconsulta Integrada (chamada de vídeo dentro do sistema para consultas online).
+Assinatura Digital de Documentos (receitas, atestados médicos, pedidos de exames).
+💎 Funcionalidades Premium (Para Monetizar Melhor)
+Agenda Multi-Profissional (clínicas podem gerenciar médicos, dentistas, fisioterapeutas no mesmo sistema).
+Integração com Convênios e Planos de Saúde (facilita a marcação e pagamento de consultas).
+IA para Sugerir Horários (o sistema recomenda horários com base no perfil do paciente e da clínica).
+Chat Seguro entre Médico e Paciente (para tirar dúvidas antes da consulta).
+Exportação de Relatórios e Dados (para controle financeiro e estatísticas).
+Monetização
+💰 Modelo de Assinatura:
+
+Plano gratuito limitado (até X consultas/mês).
+Plano pago para clínicas e médicos independentes com mais funcionalidades.
+📌 Modelo por Comissão:
+
+Cobrar uma taxa para cada agendamento feito pelo sistema (pode ser interessante para clínicas menores).
