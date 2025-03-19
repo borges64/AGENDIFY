@@ -5,14 +5,10 @@ import { prisma } from "../utils/prisma";
 export const newClinic = async (req: FastifyRequest, reply: FastifyReply) => {
   try {
     const data: IClinic = req.body as any;
-    const verifyClinicExists = await prisma.clinic.findUnique({
-      where: {
-        cnpj: data.cnpj,
-        email: data.email
-      }
-    })
-    if (verifyClinicExists) {
-      return reply.code(400).send({ message: "Clinic already exists" })
+    const verifyEmailExists = await prisma.clinic.findUnique({ where: { email: data.email } })
+    const verifyCNPJExists = await prisma.clinic.findUnique({ where: { cnpj: data.cnpj } })
+    if(verifyEmailExists || verifyCNPJExists) {
+      return reply.code(400).send({ error: "Email or CNPJ already exists" })
     }
 
     const clinic = await prisma.clinic.create({
@@ -33,7 +29,11 @@ export const newClinic = async (req: FastifyRequest, reply: FastifyReply) => {
 }
 
 export const listAllClinics = async (req: FastifyRequest, reply: FastifyReply) => {
-  const clinics = await prisma.clinic.findMany()
+  const clinics = await prisma.clinic.findMany({
+    include: {
+      appointments: true
+    }
+  })
   return reply.code(200).send({ clinics })
 }
 

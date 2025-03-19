@@ -55,7 +55,7 @@ model Clinic {
 
 model Appointment {
   id              String   @id @default(cuid())
-  date            DateTime
+  date            String
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   patient         Patient  @relation(fields: [patientId], references: [id])
