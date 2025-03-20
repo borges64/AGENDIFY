@@ -16,6 +16,7 @@ export const newClinic = async (req: FastifyRequest, reply: FastifyReply) => {
         name: data.name,
         cnpj: data.cnpj,
         email: data.email,
+        password: data.password,
         address: data.address,
         phone: data.phone
       }

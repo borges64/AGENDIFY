@@ -1,6 +1,7 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { prisma } from "../utils/prisma";
-import { NewUserRequest } from "../utils/Interfaces";
+import { IPatient, NewUserRequest } from "../utils/Interfaces";
+import { PasswordService } from "../services/hash-function";
 
 // TODO: CRIAR PATITENT
 
@@ -41,17 +42,23 @@ export const deleteUser = async (request: FastifyRequest, reply: FastifyReply) =
 export const updateUser = async (request: FastifyRequest, reply: FastifyReply) => {
   try {
     const { id } = request.params as { id: string };
-    const { name, email, role }: NewUserRequest = request.body as NewUserRequest;
+    const { name, email, role, password, address, phone, phone2 }: NewUserRequest = request.body as NewUserRequest;
 
     // Validate input
     if (!name || !email || !role) {
       return reply.code(400).send({ error: "Name, email, and role are required." });
     }
 
+    const hashPass = await PasswordService.passwordHash(password)
+
     const user = await prisma.user.update({
       where: { id: id },
       data: {
         name,
+        password: hashPass, 
+        address, 
+        phone,
+        phone2,
         email,
         role: role.toUpperCase() as "SCHEDULER" | "PROFESSIONAL",
       }
@@ -66,11 +73,11 @@ export const updateUser = async (request: FastifyRequest, reply: FastifyReply) =
 
 export const newUser = async (request: FastifyRequest, reply: FastifyReply) => {
   try {
-    const { name, email, role }: NewUserRequest = request.body as NewUserRequest;
+    const { name, email, role, address, password, phone, phone2 }: NewUserRequest = request.body as NewUserRequest;
 
     // Validate input
-    if (!name || !email || !role) {
-      return reply.code(400).send({ error: "Name, email, and role are required." });
+    if (!name || !email || !role || !password || !address || !phone) {
+      return reply.code(400).send({ error: "Ainda falta alguma informação" });
     }
 
     const existingUser = await prisma.user.findUnique({
@@ -81,12 +88,18 @@ export const newUser = async (request: FastifyRequest, reply: FastifyReply) => {
       return reply.code(400).send({ error: "Email já está em uso." });
     }
 
+    const hashPass = await PasswordService.passwordHash(password)
+
     // Create the new user
     const user = await prisma.user.create({
       data: {
         name,
         email,
-        role: role.toUpperCase() as "SCHEDULER" | "PROFESSIONAL",
+        role: role.toUpperCase() as "SCHEDULER" | "PROFESSIONAL" | "ADMIN",
+        address,
+        phone,
+        password: hashPass,
+        phone2,
       }
     });
 
@@ -99,7 +112,7 @@ export const newUser = async (request: FastifyRequest, reply: FastifyReply) => {
 
 export const createPatient = async (request: FastifyRequest, reply: FastifyReply) => {
   try {
-    const { email, cpf, name  } = request.body as any;
+    const { email, cpf, name, password, address, phone, phone2  } = request.body as IPatient;
     const verifyPatient = await prisma.patient.findUnique({
       where: { email }})
     if(verifyPatient){
@@ -107,9 +120,13 @@ export const createPatient = async (request: FastifyRequest, reply: FastifyReply
     }
     const patient = await prisma.patient.create({
       data: {
+        name, 
         email,
+        password,
         cpf,
-        name
+        address,
+        phone,
+        phone2,
       }
     });
 
@@ -161,6 +178,34 @@ export const deletePatient = async (request: FastifyRequest, reply: FastifyReply
     });
 
     return reply.code(200).send({ message: "Patient deleted successfully", patient });
+  } catch (error) {
+    console.error(error);
+    reply.code(500).send({ error: "Internal Server Error" });
+  }
+}
+
+export const loginUser = async (request: FastifyRequest, reply: FastifyReply) => {
+  try {
+    const { email, password } = request.body as { email: string, password: string };
+
+    const user = await prisma.user.findUnique({
+      where: { email }
+    });
+
+    if (!user) {
+      return reply.code(404).send({ error: "User not found" });
+    }
+
+    const passwordMatch = await PasswordService.verifyHash(password, user.password);
+
+    if (!passwordMatch) {
+      return reply.code(401).send({ error: "Invalid password" });
+    }
+
+    return reply.code(200).send({
+      message: "Login successful",
+      user
+    });
   } catch (error) {
     console.error(error);
     reply.code(500).send({ error: "Internal Server Error" });
