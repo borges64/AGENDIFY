@@ -21,6 +21,21 @@ export const newAppointment = async (req: FastifyRequest, reply: FastifyReply) =
       return reply.code(400).send({ error: "Date, patientId, scheduledById, performedById, and clinicId are required." });
     }
 
+    // TROCAR PATIENTID POR CPF AQUI E NO PRISMA.SCHEME
+    const verifyPatient = await prisma.patient.findUnique({ 
+      where: {
+        // TROCAR PARA CPF
+        id: patientId 
+      }
+    })
+
+    // VERIFICAR POR PELO ID / CPF / DO PROFISSIONAL  
+    // const verifyPerformed = await prisma.user.findMany({
+    //   where: {
+    //     id
+    //   }
+    // })
+
     const parsedDate = parse(date, "yyyy-MM-dd", new Date());
 
     const appointment = await prisma.appointment.create({

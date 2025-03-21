@@ -6,7 +6,10 @@ export const UserRoutes = async (fastify: FastifyInstance, options: any, done: a
   fastify.put("/update-user/:id", updateUser)
   fastify.delete("/delete-user/:id", deleteUser)
 
+  // LOGIN AINDA NÃO FUNCIONAL []
   fastify.post("/login-admin", loginUser)
+  
+  // ADICIONAR AUTH PARA ACESSO - SOMENTE ADMINS PODEM LISTAR TODOS OS USUÁRIOS []
   fastify.get("/list-all", listAll)
   done()
 }

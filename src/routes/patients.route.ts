@@ -5,5 +5,8 @@ export const PatientRoutes = async (fastify: FastifyInstance, options: any, done
   fastify.post("/new-patient", createPatient)
   fastify.put("/update-patient/:id", updatePatient)
   fastify.delete("/delete-patient", deletePatient)
+
+  // LISTAGEM DE PACIENTES - RESTRIÇÕES DE INFORMAÇÃO E ACESSO []
+  // fastify.get("/list-all-patients", listAll)
   done()
 }

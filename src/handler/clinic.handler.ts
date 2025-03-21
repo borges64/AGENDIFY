@@ -4,13 +4,15 @@ import { prisma } from "../utils/prisma";
 
 export const newClinic = async (req: FastifyRequest, reply: FastifyReply) => {
   try {
-    const data: IClinic = req.body as any;
+    const data: IClinic = req.body as IClinic;
     const verifyEmailExists = await prisma.clinic.findUnique({ where: { email: data.email } })
     const verifyCNPJExists = await prisma.clinic.findUnique({ where: { cnpj: data.cnpj } })
     if(verifyEmailExists || verifyCNPJExists) {
       return reply.code(400).send({ error: "Email or CNPJ already exists" })
     }
 
+    // CONVERSAR COM O MAYRON SOBRE FILAS, CLINICAS NÃO PODE SER CRIADAS A ESMO, SEM UMA VERIFICAÇÃO DE DADOS E REGISTRO
+    // OLHAR MAIS INFORMAÇÕES SOBRE A CLINICA E SEUS DADOS - AUTORIZAÇÃO DO GOVERNO PARA FUNCIONAMENTO - MENOS CRITERIOSO
     const clinic = await prisma.clinic.create({
       data: {
         name: data.name,
