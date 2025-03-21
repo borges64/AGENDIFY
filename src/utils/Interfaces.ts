@@ -1,11 +1,8 @@
-export interface NewUserRequest {
-  name: string;
+export interface IAdmin {
+  username: string;
   email: string;
-  role: 'SCHEDULER' | 'PROFESSIONAL' | 'ADMIN';
   password: string;
-  address: string;
   phone: string;
-  phone2: string;
 }
 
 export interface IClinic {
