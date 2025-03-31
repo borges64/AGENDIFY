@@ -21,11 +21,9 @@ export const newAppointment = async (req: FastifyRequest, reply: FastifyReply) =
   }
 }
 
-export const getAppointmentsByUser = async (req: FastifyRequest, reply: FastifyReply) => {
+export const getAppointments = async (req: FastifyRequest, reply: FastifyReply) => {
   try {
-    const { userId }: any = req.params;
     const appointments = await prisma.appointment.findMany({
-      where: { userId },
       include: {
         user: true,
       },

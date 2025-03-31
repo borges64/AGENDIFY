@@ -1,19 +1,23 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { prisma } from "../utils/prisma";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import { userSchama } from "../utils/validations";
+
 
 export const newUser = async (req: FastifyRequest, reply: FastifyReply) => {
   try {
     const validateData = userSchama.parse(req.body);
     const verifyUser = await prisma.user.findUnique({ where: { email: validateData.email, cpf: validateData.cpf } });
     if (verifyUser) return reply.status(400).send({ message: "Email ou CPF já cadastrados na base de dados" });
+    const hashPassword = await bcrypt.hash(validateData.password, 8);
     const user = await prisma.user.create({
       data: {
         name: validateData.name,
         email: validateData.email,
         cpf: validateData.cpf,
         phone: validateData.phone,
-        password: validateData.password,
+        password: hashPassword,
         address: validateData.address,
       }
     })
@@ -21,13 +25,6 @@ export const newUser = async (req: FastifyRequest, reply: FastifyReply) => {
       message: "Usuário cadastrado com sucesso",
       user
     });
-  } catch(erro) { return console.error(erro) }
-}
-
-export const getUsers = async (req: FastifyRequest, reply: FastifyReply) => {
-  try {
-    const users = await prisma.user.findMany();
-    return reply.status(200).send(users);
   } catch(erro) { return console.error(erro) }
 }
 
